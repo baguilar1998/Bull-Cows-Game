@@ -7,20 +7,27 @@ void UBullCowCartridge::BeginPlay() // When the game starts
     PrintLine(TEXT("Welcome to the Bull Cows game!"));
     PrintLine(TEXT("Guess the 5 letter word!")); // Number might change for other words! Cannot be hard coded
     PrintLine(TEXT("Press enter to start..."));
-    HiddenWord = TEXT("kenji"); 
+    
+    InitGame();
+
+    // Prompt Player For Guess
 }
 
 void UBullCowCartridge::OnInput(const FString& Input) // When the player hits enter
 {
     ClearScreen();
+
     // Checks whether the word the user inputted was the correct guess
     bool GuessIsCorrect = HiddenWord == Input;
     if (GuessIsCorrect) { 
         PrintLine(TEXT("You have guessed the right word!"));
     } else {
+        bool LengthEquals = HiddenWord.Len() == Input.Len();
+        if (!LengthEquals) {
+            PrintLine(TEXT("The Hidden Word is 5 Characters long, try again!"));
+        }
         PrintLine(TEXT("You have guessed the wrong word :("));
     }
-
     // Check if isogram
     // check right number of characters
 
@@ -32,4 +39,9 @@ void UBullCowCartridge::OnInput(const FString& Input) // When the player hits en
     // prompt to play again
     // Check user input
     // play again or quit
+}
+
+void UBullCowCartridge::InitGame() {
+    Lives = 5;
+    HiddenWord = TEXT("kenji"); 
 }
