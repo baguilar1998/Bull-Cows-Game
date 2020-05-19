@@ -6,7 +6,6 @@
 #include "Components/ActorComponent.h"
 #include "Cartridge.generated.h"
 
-
 UCLASS(Abstract)
 class BULLCOWGAME_API UCartridge : public UActorComponent
 {

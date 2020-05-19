@@ -12,12 +12,16 @@ class BULLCOWGAME_API UBullCowCartridge : public UCartridge
 	GENERATED_BODY()
 
 	public:
-	virtual void BeginPlay() override;
-	virtual void OnInput(const FString& Input) override;
-	void InitGame();
+		virtual void BeginPlay() override;
+		virtual void OnInput(const FString& Input) override;
+		void InitGame();
+		void EndGame();
+		void ProcessGuess(const FString& Guess);
+		bool isIsogram(const FString& Guess) const;
 
 	// Your declarations go below!
 	private:
 		FString HiddenWord;
 		int32 Lives;
+		bool bGameOver;
 };
