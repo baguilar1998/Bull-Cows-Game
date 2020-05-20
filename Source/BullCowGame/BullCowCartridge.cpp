@@ -1,6 +1,7 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 #include "BullCowCartridge.h"
 #include "HiddenWordList.h"
+#include "LetterSet.h"
 
 
 void UBullCowCartridge::BeginPlay()
@@ -26,8 +27,6 @@ void UBullCowCartridge::InitGame()
     HiddenWord = Words[WordIndex];
     Lives = HiddenWord.Len(); 
     bGameOver = false;
-    //Set = new LetterSet();
-    Set.ResetSet();
     PrintLine(TEXT("Welcome to the Bull Cows game!"));
     PrintLine(TEXT("Guess the %i letter word!"), HiddenWord.Len()); 
     PrintLine(TEXT("You have %i Lives"), Lives);
@@ -66,11 +65,11 @@ void UBullCowCartridge::ProcessGuess(const FString& Guess)
             PrintLine(TEXT("You have guessed the wrong word!"));
         }
     }
-    Set.ResetSet();
 }
 
 bool UBullCowCartridge::isIsogram(const FString& Guess)
 {
+    LetterSet Set;
     bool bHasRepeatingLetter = false;
     for (int32 Index = 0; Index < Guess.Len(); Index++) {
         char Letter = Guess[Index];
@@ -80,12 +79,12 @@ bool UBullCowCartridge::isIsogram(const FString& Guess)
         }
         Set.AddLetter(Letter);
     }
-    Set.ResetSet();
     return !bHasRepeatingLetter;
 }
 
 FBullCowCount UBullCowCartridge::getBullCowCount(const FString& Guess) 
 {
+    LetterSet Set;
     FBullCowCount Count = {0,0};
     for (int32 Index = 0; Index < HiddenWord.Len();Index++) {
         char Letter = HiddenWord[Index];
@@ -101,6 +100,5 @@ FBullCowCount UBullCowCartridge::getBullCowCount(const FString& Guess)
             Count.Cows++;
         }
     }
-    Set.ResetSet();
     return Count;
 }

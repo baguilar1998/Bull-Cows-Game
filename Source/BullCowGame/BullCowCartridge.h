@@ -3,7 +3,6 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "LetterSet.h"
 #include "Console/Cartridge.h"
 #include "BullCowCartridge.generated.h"
 
@@ -31,5 +30,4 @@ class BULLCOWGAME_API UBullCowCartridge : public UCartridge
 		FString HiddenWord;
 		int32 Lives, WordIndex;
 		bool bGameOver;
-		LetterSet Set;
 };
