@@ -1,5 +1,7 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 #include "BullCowCartridge.h"
+#include "HiddenWordList.h"
+
 
 void UBullCowCartridge::BeginPlay()
 {
@@ -20,9 +22,12 @@ void UBullCowCartridge::OnInput(const FString& Input) // When the player hits en
 
 void UBullCowCartridge::InitGame() 
 {
-    HiddenWord = TEXT("kenji");
+    WordIndex = FMath::RandRange(0,Words.Num()-1);
+    HiddenWord = Words[WordIndex];
     Lives = HiddenWord.Len(); 
     bGameOver = false;
+    //Set = new LetterSet();
+    Set.ResetSet();
     PrintLine(TEXT("Welcome to the Bull Cows game!"));
     PrintLine(TEXT("Guess the %i letter word!"), HiddenWord.Len()); 
     PrintLine(TEXT("You have %i Lives"), Lives);
@@ -53,27 +58,49 @@ void UBullCowCartridge::ProcessGuess(const FString& Guess)
             return;
         }
         PrintLine(TEXT("You have %i Lives Remaining"), Lives);
+        FBullCowCount Count = getBullCowCount(Guess);
+        PrintLine(TEXT("You have %i Bulls and %i Cows"), Count.Bulls,Count.Cows);
         if (!bLengthEquals) {
             PrintLine(TEXT("The Hidden Word is %i Characters long, try again!"), HiddenWord.Len());
         } else {
             PrintLine(TEXT("You have guessed the wrong word!"));
         }
     }
+    Set.ResetSet();
 }
 
-bool UBullCowCartridge::isIsogram(const FString& Guess) const 
+bool UBullCowCartridge::isIsogram(const FString& Guess)
 {
-    bool *LetterExists  = new bool[26];
-    for (int index = 0; index < 26; index++)
-        LetterExists[index] = false;
-    for (int index = 0; index < Guess.Len(); index++) {
-        int lIndex = Guess[index] - 'a';
-        if (LetterExists[lIndex]){
-            delete LetterExists;
-            return false;
+    bool bHasRepeatingLetter = false;
+    for (int32 Index = 0; Index < Guess.Len(); Index++) {
+        char Letter = Guess[Index];
+        bHasRepeatingLetter = Set.ContainsLetter(Letter);
+        if (bHasRepeatingLetter){
+            break;
         }
-        LetterExists[lIndex] = true;
+        Set.AddLetter(Letter);
     }
-    delete LetterExists;
-    return true;
+    Set.ResetSet();
+    return !bHasRepeatingLetter;
+}
+
+FBullCowCount UBullCowCartridge::getBullCowCount(const FString& Guess) 
+{
+    FBullCowCount Count = {0,0};
+    for (int32 Index = 0; Index < HiddenWord.Len();Index++) {
+        char Letter = HiddenWord[Index];
+        Set.AddLetter(Letter);
+    }
+    
+    for (int32 Index = 0; Index < Guess.Len() && Index < HiddenWord.Len(); Index++) {
+        char Letter = Guess[Index];
+        bool bSameLetter = Letter == HiddenWord[Index];
+        if(bSameLetter) {
+            Count.Bulls++;
+        } else if (Set.ContainsLetter(Letter)) {
+            Count.Cows++;
+        }
+    }
+    Set.ResetSet();
+    return Count;
 }

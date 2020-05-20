@@ -3,8 +3,15 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "LetterSet.h"
 #include "Console/Cartridge.h"
 #include "BullCowCartridge.generated.h"
+
+
+struct FBullCowCount {
+	int32 Bulls;
+	int32 Cows;
+};
 
 UCLASS(ClassGroup=(Custom), meta=(BlueprintSpawnableComponent))
 class BULLCOWGAME_API UBullCowCartridge : public UCartridge
@@ -17,11 +24,12 @@ class BULLCOWGAME_API UBullCowCartridge : public UCartridge
 		void InitGame();
 		void EndGame();
 		void ProcessGuess(const FString& Guess);
-		bool isIsogram(const FString& Guess) const;
+		bool isIsogram(const FString& Guess);
+		FBullCowCount getBullCowCount(const FString& Guess);
 
-	// Your declarations go below!
 	private:
 		FString HiddenWord;
-		int32 Lives;
+		int32 Lives, WordIndex;
 		bool bGameOver;
+		LetterSet Set;
 };
