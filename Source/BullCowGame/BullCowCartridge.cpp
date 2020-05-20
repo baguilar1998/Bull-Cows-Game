@@ -69,26 +69,28 @@ void UBullCowCartridge::ProcessGuess(const FString& Guess)
 
 bool UBullCowCartridge::isIsogram(const FString& Guess)
 {
-    LetterSet Set;
+    LetterSet *Set = new LetterSet();
     bool bHasRepeatingLetter = false;
     for (int32 Index = 0; Index < Guess.Len(); Index++) {
         char Letter = Guess[Index];
-        bHasRepeatingLetter = Set.ContainsLetter(Letter);
+        bHasRepeatingLetter = Set->ContainsLetter(Letter);
         if (bHasRepeatingLetter){
             break;
         }
-        Set.AddLetter(Letter);
+        Set->AddLetter(Letter);
     }
+    delete Set;
+    Set=NULL;
     return !bHasRepeatingLetter;
 }
 
 FBullCowCount UBullCowCartridge::getBullCowCount(const FString& Guess) 
 {
-    LetterSet Set;
+    LetterSet *Set = new LetterSet();
     FBullCowCount Count = {0,0};
     for (int32 Index = 0; Index < HiddenWord.Len();Index++) {
         char Letter = HiddenWord[Index];
-        Set.AddLetter(Letter);
+        Set->AddLetter(Letter);
     }
     
     for (int32 Index = 0; Index < Guess.Len() && Index < HiddenWord.Len(); Index++) {
@@ -96,9 +98,12 @@ FBullCowCount UBullCowCartridge::getBullCowCount(const FString& Guess)
         bool bSameLetter = Letter == HiddenWord[Index];
         if(bSameLetter) {
             Count.Bulls++;
-        } else if (Set.ContainsLetter(Letter)) {
+        } else if (Set->ContainsLetter(Letter)) {
             Count.Cows++;
         }
     }
+
+    delete Set;
+    Set = NULL;
     return Count;
 }
